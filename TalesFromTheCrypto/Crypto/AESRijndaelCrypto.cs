@@ -10,22 +10,39 @@
     /// See http://stackoverflow.com/questions/165808/simple-two-way-encryption-for-c-sharp
     /// </summary>
     /// <seealso cref="ICryptoGenerator" />
-    public class AesCrypto : ICryptoGenerator
+    public class AesRijndaelCrypto : ICryptoGenerator
     {
         private ICryptoTransform _encryptor, _decryptor;
         private UTF8Encoding _encoder;
         private readonly RijndaelManaged _rijndaelManaged;
 
-        public AesCrypto()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AesRijndaelCrypto"/> class.
+        /// </summary>
+        public AesRijndaelCrypto()
         {
             _rijndaelManaged = new RijndaelManaged();
 
             CryptoName = "AES (RijndaelManaged)";
-            CryptoDescription = "The Advanced Encryption Standard (AES), also known as Rijndael (its original name), is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology (NIST) in 2001.  Considered a replacement DES";
+            CryptoDescription = "The Advanced Encryption Standard (AES), also known as Rijndael (its original name), is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology (NIST) in 2001.";
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is initialised.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is initialised; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsInitialised { get; private set; }
+
+        /// <summary>
+        /// Gets the name of the crypto type supported.
+        /// </summary>
         public string CryptoName { get; }
 
+        /// <summary>
+        /// Gets the text describing the crypto algorithm.
+        /// </summary>
         public string CryptoDescription { get; }
 
         /// <summary>
@@ -39,28 +56,91 @@
             get { return _rijndaelManaged?.KeySize; }
         }
 
+        /// <summary>
+        /// Gets the minimum size of the legal crypto key size.
+        /// </summary>
+        public int MinBlockSize { get; private set; }
+
+        /// <summary>
+        /// Gets the maximum size of the legal crypto key size.
+        /// </summary>
+        public int MaxBlockSize { get; private set; }
+
+        /// <summary>
+        /// Gets the size of the legal key interval step size between the minimum and maximum key sizes.
+        /// </summary>
+        public int BlockStepSize { get; private set; }
+
+        /// <summary>
+        /// Gets the block size options.
+        /// </summary>
+        /// <value>
+        /// The block size options.
+        /// </value>
+        public IList<int> BlockSizeOptions { get { return CalculateBlockSizeOptions(); } }
+
+        /// <summary>
+        /// Gets the size of the current block.
+        /// </summary>
+        /// <value>
+        /// The size of the current block.
+        /// </value>
+        public int? CurrentBlockSize { get { return _rijndaelManaged?.BlockSize; } }
+
+        /// <summary>
+        /// Gets the current cipher mode.
+        /// </summary>
+        /// <value>
+        /// The current cipher mode.
+        /// </value>
+        public string CurrentCipherMode
+        {
+            get { return Enum.GetName(typeof(CipherMode), _rijndaelManaged.Mode); }
+        }
+
+        /// <summary>
+        /// Gets the current padding mode.
+        /// </summary>
+        /// <value>
+        /// The current padding mode.
+        /// </value>
+        public string CurrentPaddingMode { get { return Enum.GetName(typeof(PaddingMode), _rijndaelManaged.Padding); } }
+
+        /// <summary>
+        /// Initialises the crypto class instance.
+        /// </summary>
         public void Initialise()
         {
             GenerateKey();
             GenerateVector();
-
-            _encryptor = _rijndaelManaged.CreateEncryptor(Key, InitialisationVector);
-            _decryptor = _rijndaelManaged.CreateDecryptor(Key, InitialisationVector);
             _encoder = new UTF8Encoding();
+            IsInitialised = true;
         }
 
+        /// <summary>
+        /// Gets or sets the encryption key.
+        /// </summary>
         public byte[] Key { get; set; }
 
-        public string Mode
-        {
-            get { return _rijndaelManaged.Mode.ToString(); }
-        }
+        /// <summary>
+        /// Gets the current crypto mode.
+        /// </summary>
+        /// <value>
+        /// The mode.
+        /// </value>
+        public string Mode => _rijndaelManaged.Mode.ToString();
 
-        public string Padding
-        {
-            get { return _rijndaelManaged.Padding.ToString(); }
-        }
+        /// <summary>
+        /// Gets the padding mode.
+        /// </summary>
+        /// <value>
+        /// The padding.
+        /// </value>
+        public string Padding => _rijndaelManaged.Padding.ToString();
 
+        /// <summary>
+        /// Gets or sets the initialisation vector.
+        /// </summary>
         public byte[] InitialisationVector { get; set; }
 
         /// <summary>
@@ -108,6 +188,26 @@
         }
 
         /// <summary>
+        /// Calculates the block size options.
+        /// </summary>
+        /// <returns></returns>
+        public IList<int> CalculateBlockSizeOptions()
+        {
+            MinBlockSize = _rijndaelManaged.LegalBlockSizes[0].MinSize;
+            MaxBlockSize = _rijndaelManaged.LegalBlockSizes[0].MaxSize;
+            BlockStepSize = _rijndaelManaged.LegalBlockSizes[0].SkipSize;
+            var size = MinBlockSize;
+            var bso = new List<int>();
+            while (size <= MaxBlockSize)
+            {
+                bso.Add(size);
+                size = size + BlockStepSize;
+            }
+
+            return bso;
+        }
+
+        /// <summary>
         /// Gets the available crypto modes.
         /// </summary>
         /// <value>
@@ -119,7 +219,7 @@
             {
                 var opt = new List<string>(Enum.GetNames(_rijndaelManaged.Mode.GetType()));
 
-                // RijndaelManaged does not support these
+                // RijndaelManaged does not support these modes
                 opt.Remove("CTS");
                 opt.Remove("OFB");
                 return opt;
@@ -132,6 +232,15 @@
         public void SetKeySize(int keySize)
         {
             _rijndaelManaged.KeySize = keySize;
+        }
+
+        /// <summary>
+        /// Sets the blocksize.
+        /// </summary>
+        /// <param name="blockSize">Size of the block.</param>
+        public void SetBlockSize(int blockSize)
+        {
+            _rijndaelManaged.BlockSize = blockSize;
         }
 
         /// <summary>
@@ -211,6 +320,8 @@
         /// </returns>
         public byte[] Encrypt(byte[] buffer)
         {
+            // we create the encryptor each time in order to respect any UI setting changes
+            _encryptor = _rijndaelManaged.CreateEncryptor(Key, InitialisationVector);
             return Transform(buffer, _encryptor);
         }
 
@@ -223,6 +334,8 @@
         /// </returns>
         public byte[] Decrypt(byte[] buffer)
         {
+            // we create the decryptor each time in order to respect any UI setting changes
+            _decryptor = _rijndaelManaged.CreateDecryptor(Key, InitialisationVector);
             return Transform(buffer, _decryptor);
         }
 
@@ -232,14 +345,17 @@
         /// <param name="buffer">The buffer.</param>
         /// <param name="transform">The transform.</param>
         /// <returns></returns>
-        protected byte[] Transform(byte[] buffer, ICryptoTransform transform)
+        private byte[] Transform(byte[] buffer, ICryptoTransform transform)
         {
-            MemoryStream stream = new MemoryStream();
-            using (CryptoStream cs = new CryptoStream(stream, transform, CryptoStreamMode.Write))
+            using (MemoryStream stream = new MemoryStream())
             {
-                cs.Write(buffer, 0, buffer.Length);
+                using (CryptoStream cs = new CryptoStream(stream, transform, CryptoStreamMode.Write))
+                {
+                    cs.Write(buffer, 0, buffer.Length);
+                }
+
+                return stream.ToArray();
             }
-            return stream.ToArray();
         }
 
         /// <summary>

@@ -21,6 +21,9 @@
             <Label>Key Size</Label>
             <ComboBox ItemsSource="{Binding KeySizes}" 
                       SelectedItem="{Binding SelectedKeySize}" />
+            <Label>Block Size</Label>
+            <ComboBox ItemsSource="{Binding BlockSizes}" 
+                      SelectedItem="{Binding SelectedBlockSize}" />
             <Label>Cipher Modes</Label>
             <ComboBox ItemsSource="{Binding CipherModes}" 
                       SelectedItem="{Binding SelectedCipherMode}" />
@@ -42,9 +45,9 @@
             <GroupBox Header="Cryptographic Keys" Grid.Row="1">
                 <StackPanel>
                     <Label>Key</Label>
-                    <TextBox IsReadOnly="True" Text="{Binding Key, Mode=OneWay}"></TextBox>
+                    <TextBlock Text="{Binding Key, Mode=OneWay}" />
                     <Label>Initialisation Vector</Label>
-                    <TextBox IsReadOnly="True" Text="{Binding Vector, Mode=OneWay}"></TextBox>
+                    <TextBlock Text="{Binding Vector, Mode=OneWay}" />
                 </StackPanel>
             </GroupBox>
 
@@ -54,9 +57,9 @@
                     <TextBox Text="{Binding OriginalString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True"></TextBox>
                     <Button Command="{Binding EncryptStringCommand}" Width="200" Margin="0,10" HorizontalAlignment="Left">Encrypt String</Button>
                     <Label>Encrypted String</Label>
-                    <TextBox Text="{Binding EncryptedString}" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True"></TextBox>
+                    <TextBlock Text="{Binding EncryptedString}" TextWrapping="Wrap" />
                     <Label>Decrypted String</Label>
-                    <TextBox Text="{Binding DecryptedString}" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True"></TextBox>
+                    <TextBlock Text="{Binding DecryptedString}" TextWrapping="Wrap" />
                     <Button Command="{Binding DecryptStringCommand}" Width="200" Margin="0, 10" HorizontalAlignment="Left">Dencrypt String</Button>
                 </StackPanel>
             </GroupBox>

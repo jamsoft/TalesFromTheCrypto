@@ -1,6 +1,5 @@
 ﻿namespace TalesFromTheCrypto.ViewModels
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
@@ -17,18 +16,33 @@
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        #region Private Fields
+
+        private int _selectedBlockSize;
+        private int _selectedKeySize;
+
+        private string _originalString;
+
+        private CommandHandler _intitialiseCommand;
+        private CommandHandler _encryptStringCommand;
+        private CommandHandler _decryptStringCommand;
+        private ICryptoGenerator _selectedCryptoClass;
+
+        private string _selectedCipherMode;
+        private string _selectedPaddingMode;
+
+        #endregion
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
         public MainWindowViewModel()
         {
-            CryptoGenerators = new List<ICryptoGenerator> {new AesCrypto()};
+            CryptoGenerators = new List<ICryptoGenerator> {new AesRijndaelCrypto()};
             OnPropertyChanged(nameof(CryptoGenerators));
         }
 
         #region Test Value Properties
-
-        private string _originalString;
 
         /// <summary>
         /// Gets or sets the original unencrpted string.
@@ -64,7 +78,7 @@
 
         #endregion
 
-        #region Key Data
+        #region Key Data Properties
 
         /// <summary>
         /// Gets the current cryptographic key from the selected cryptographic class.
@@ -84,9 +98,7 @@
 
         #endregion
 
-        #region Commands
-
-        private CommandHandler _intitialiseCommand;
+        #region Command Handlers
 
         /// <summary>
         /// Gets the intitialise command.
@@ -99,7 +111,7 @@
             get { return _intitialiseCommand ?? (_intitialiseCommand = new CommandHandler(InitialiseCommandExecuted, CanInitaliseCryto)); }
         }
 
-        private CommandHandler _encryptStringCommand;
+        
 
         /// <summary>
         /// Gets the encrypt string command.
@@ -112,7 +124,7 @@
             get { return _encryptStringCommand ?? (_encryptStringCommand = new CommandHandler(EncryptStringCommandExecuted, CanEncryptOriginalString)); }
         }
 
-        private CommandHandler _decryptStringCommand;
+        
 
         /// <summary>
         /// Gets the decrypt string command.
@@ -218,8 +230,6 @@
         /// </value>
         public IList<ICryptoGenerator> CryptoGenerators { get; }
 
-        private ICryptoGenerator _selectedCryptoClass;
-
         /// <summary>
         /// Gets or sets the selected crypto class.
         /// </summary>
@@ -234,12 +244,22 @@
                 _selectedCryptoClass = value;
 
                 OnPropertyChanged(nameof(KeySizes));
+                OnPropertyChanged(nameof(BlockSizes));
                 OnPropertyChanged(nameof(CipherModes));
                 OnPropertyChanged(nameof(PaddingModes));
                 OnPropertyChanged(nameof(CryptoDescription));
 
                 SelectedKeySize = KeySizes.FirstOrDefault(x => _selectedCryptoClass.CurrentKeySize != null && x == _selectedCryptoClass.CurrentKeySize.Value);
                 OnPropertyChanged(nameof(SelectedKeySize));
+
+                SelectedBlockSize = BlockSizes.FirstOrDefault(x => _selectedCryptoClass.CurrentBlockSize != null && x == _selectedCryptoClass.CurrentBlockSize.Value);
+                OnPropertyChanged(nameof(SelectedBlockSize));
+
+                SelectedCipherMode = CipherModes.FirstOrDefault(x => _selectedCryptoClass.CurrentCipherMode != null && x == _selectedCryptoClass.CurrentCipherMode);
+                OnPropertyChanged(nameof(SelectedCipherMode));
+
+                SelectedPaddingMode = PaddingModes.FirstOrDefault(x => _selectedCryptoClass.CurrentPaddingMode != null && x == _selectedCryptoClass.CurrentPaddingMode);
+                OnPropertyChanged(nameof(SelectedPaddingMode));
 
                 ResetUI();
             }
@@ -252,8 +272,6 @@
         /// The key sizes.
         /// </value>
         public IList<int> KeySizes => SelectedCryptoClass?.KeySizeOptions;
-
-        private int _selectedKeySize;
 
         /// <summary>
         /// Gets or sets the size of the key to be used.
@@ -271,30 +289,96 @@
             }
         }
 
+        /// <summary>
+        /// Gets the block sizes.
+        /// </summary>
+        /// <value>
+        /// The block sizes.
+        /// </value>
+        public IList<int> BlockSizes => SelectedCryptoClass?.BlockSizeOptions;
+        
+        /// <summary>
+        /// Gets or sets the size of the selected block.
+        /// </summary>
+        /// <value>
+        /// The size of the selected block.
+        /// </value>
+        public int SelectedBlockSize
+        {
+            get { return _selectedBlockSize; }
+            set
+            {
+                _selectedBlockSize = value;
+                _selectedCryptoClass.SetBlockSize(value);
+
+                if (!_selectedCryptoClass.IsInitialised)
+                {
+                    return;
+                }
+
+                // vector needs updating
+                _selectedCryptoClass.GenerateVector();
+                OnPropertyChanged(nameof(Vector));
+
+                EncryptedString = null;
+                OnPropertyChanged(nameof(EncryptedString));
+
+                DecryptedString = null;
+                OnPropertyChanged(nameof(DecryptedString));
+                DecryptStringCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets the cipher modes.
+        /// </summary>
+        /// <value>
+        /// The cipher modes.
+        /// </value>
         public IList<string> CipherModes
         {
             get { return _selectedCryptoClass?.AvailableModes; }
         }
 
+        /// <summary>
+        /// Gets or sets the selected cipher mode.
+        /// </summary>
+        /// <value>
+        /// The selected cipher mode.
+        /// </value>
         public string SelectedCipherMode
         {
-            get { return _selectedCryptoClass?.Mode; }
+            get { return _selectedCipherMode; }
             set
             {
+                _selectedCipherMode = value;
                 _selectedCryptoClass.SetCipherMode(value);
             }
         }
 
+        /// <summary>
+        /// Gets the padding modes.
+        /// </summary>
+        /// <value>
+        /// The padding modes.
+        /// </value>
         public IList<string> PaddingModes
         {
             get { return _selectedCryptoClass?.AvailablePaddingModes; }
         }
 
+        /// <summary>
+        /// Gets or sets the selected padding mode.
+        /// </summary>
+        /// <value>
+        /// The selected padding mode.
+        /// </value>
         public string SelectedPaddingMode
         {
-            get { return _selectedCryptoClass?.Padding; }
+            get { return _selectedPaddingMode; }
             set
             {
+                _selectedPaddingMode = value;
                 _selectedCryptoClass.SetPaddingMode(value);
             }
         }
@@ -309,7 +393,7 @@
 
         #endregion
 
-        #region UI Code
+        #region UI Specific Code
 
         /// <summary>
         /// Resets the UI.

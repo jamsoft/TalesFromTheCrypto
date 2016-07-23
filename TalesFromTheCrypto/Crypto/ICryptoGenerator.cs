@@ -5,6 +5,14 @@
     public interface ICryptoGenerator
     {
         /// <summary>
+        /// Gets a value indicating whether this instance is initialised.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is initialised; otherwise, <c>false</c>.
+        /// </value>
+        bool IsInitialised { get; }
+
+        /// <summary>
         /// Gets the name of the crypto type supported.
         /// </summary>
         string CryptoName { get; }
@@ -41,11 +49,6 @@
         byte[] InitialisationVector { get; set; }
 
         /// <summary>
-        /// Gets the valid key size options for the crytography method.
-        /// </summary>
-        IList<int> KeySizeOptions { get; }
-
-        /// <summary>
         /// Gets the minimum size of the legal crypto key size.
         /// </summary>
         int MinKeySize { get; }
@@ -61,12 +64,64 @@
         int KeyStepSize { get; }
 
         /// <summary>
+        /// Gets the valid key size options for the crytography method.
+        /// </summary>
+        IList<int> KeySizeOptions { get; }
+
+        /// <summary>
         /// Gets the size of the currently selected keysize.
         /// </summary>
         /// <value>
         /// The size of the current key.
         /// </value>
         int? CurrentKeySize { get; }
+
+        /// <summary>
+        /// Gets the minimum size of the legal crypto key size.
+        /// </summary>
+        int MinBlockSize { get; }
+
+        /// <summary>
+        /// Gets the maximum size of the legal crypto key size.
+        /// </summary>
+        int MaxBlockSize { get; }
+
+        /// <summary>
+        /// Gets the size of the legal key interval step size between the minimum and maximum key sizes.
+        /// </summary>
+        int BlockStepSize { get; }
+
+        /// <summary>
+        /// Gets the block size options.
+        /// </summary>
+        /// <value>
+        /// The block size options.
+        /// </value>
+        IList<int> BlockSizeOptions { get; }
+
+        /// <summary>
+        /// Gets the size of the current block.
+        /// </summary>
+        /// <value>
+        /// The size of the current block.
+        /// </value>
+        int? CurrentBlockSize { get; }
+
+        /// <summary>
+        /// Gets the current cipher mode.
+        /// </summary>
+        /// <value>
+        /// The current cipher mode.
+        /// </value>
+        string CurrentCipherMode { get; }
+
+        /// <summary>
+        /// Gets the current padding mode.
+        /// </summary>
+        /// <value>
+        /// The current padding mode.
+        /// </value>
+        string CurrentPaddingMode { get; }
 
         /// <summary>
         /// Initialises the crypto class instance.
@@ -79,7 +134,9 @@
         /// <returns></returns>
         IList<int> CalculateKeySizeOptions();
 
-        /// <summary>
+        IList<int> CalculateBlockSizeOptions();
+
+            /// <summary>
         /// Gets the available crypto modes.
         /// </summary>
         /// <value>
@@ -100,6 +157,12 @@
         /// </summary>
         /// <param name="keySize">Size of the key.</param>
         void SetKeySize(int keySize);
+
+        /// <summary>
+        /// Sets the blocksize.
+        /// </summary>
+        /// <param name="blockSize">Size of the block.</param>
+        void SetBlockSize(int blockSize);
 
         /// <summary>
         /// Sets the cipher mode.

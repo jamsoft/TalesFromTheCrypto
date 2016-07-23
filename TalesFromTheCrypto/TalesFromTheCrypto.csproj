@@ -55,7 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Crypto\AESCrypto.cs" />
+    <Compile Include="Crypto\AesRijndaelCrypto.cs" />
     <Compile Include="Inf\CommandHandler.cs" />
     <Compile Include="Crypto\ICryptoGenerator.cs" />
     <Compile Include="Inf\Utils.cs" />
