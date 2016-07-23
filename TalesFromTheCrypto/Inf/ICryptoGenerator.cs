@@ -1,4 +1,4 @@
-﻿namespace TalesFromTheCrypto.Crypto
+﻿namespace TalesFromTheCrypto.Inf
 {
     using System.Collections.Generic;
 
@@ -21,6 +21,14 @@
         /// Gets the text describing the crypto algorithm.
         /// </summary>
         string CryptoDescription { get; }
+
+        /// <summary>
+        /// Gets the crypto type description.
+        /// </summary>
+        /// <value>
+        /// The crypto type description.
+        /// </value>
+        string CryptoTypeDescription { get; }
 
         /// <summary>
         /// Gets or sets the encryption key.

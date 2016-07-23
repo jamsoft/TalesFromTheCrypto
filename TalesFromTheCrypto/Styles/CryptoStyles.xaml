@@ -10,7 +10,8 @@
     </Style>
     
     <Style x:Key="{x:Type Label}" TargetType="{x:Type Label}">
-        <Setter Property="Foreground" Value="White"></Setter>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
     </Style>
     
     <Style x:Key="{x:Type GroupBox}" TargetType="{x:Type GroupBox}">
@@ -21,7 +22,7 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Padding" Value="10"></Setter>
+        <Setter Property="Padding" Value="10"/>
     </Style>
     
 </ResourceDictionary>

@@ -40,7 +40,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <GroupBox Header="Algorithm Description">
-                <TextBlock Text="{Binding CryptoDescription}" Height="Auto" TextWrapping="Wrap"></TextBlock>
+                <StackPanel>
+                    <Label>Algorithm Type</Label>
+                    <TextBlock Text="{Binding CryptoTypeDescription, Mode=OneWay}" />
+                    <Label>Description</Label>
+                    <TextBlock Text="{Binding CryptoDescription}" Height="Auto" TextWrapping="Wrap"></TextBlock>
+                </StackPanel>
             </GroupBox>
             <GroupBox Header="Cryptographic Keys" Grid.Row="1">
                 <StackPanel>

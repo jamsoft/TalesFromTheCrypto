@@ -248,6 +248,7 @@
                 OnPropertyChanged(nameof(CipherModes));
                 OnPropertyChanged(nameof(PaddingModes));
                 OnPropertyChanged(nameof(CryptoDescription));
+                OnPropertyChanged(nameof(CryptoTypeDescription));
 
                 SelectedKeySize = KeySizes.FirstOrDefault(x => _selectedCryptoClass.CurrentKeySize != null && x == _selectedCryptoClass.CurrentKeySize.Value);
                 OnPropertyChanged(nameof(SelectedKeySize));
@@ -390,6 +391,14 @@
         /// The crypto description.
         /// </value>
         public string CryptoDescription => SelectedCryptoClass?.CryptoDescription;
+
+        /// <summary>
+        /// Gets the crypto type description.
+        /// </summary>
+        /// <value>
+        /// The crypto type description.
+        /// </value>
+        public string CryptoTypeDescription => SelectedCryptoClass?.CryptoTypeDescription;
 
         #endregion
 

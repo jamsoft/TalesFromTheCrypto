@@ -5,6 +5,7 @@
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
+    using Inf;
 
     /// <summary>
     /// See http://stackoverflow.com/questions/165808/simple-two-way-encryption-for-c-sharp
@@ -24,7 +25,9 @@
             _rijndaelManaged = new RijndaelManaged();
 
             CryptoName = "AES (RijndaelManaged)";
-            CryptoDescription = "The Advanced Encryption Standard (AES), also known as Rijndael (its original name), is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology (NIST) in 2001.";
+            CryptoDescription = "The Advanced Encryption Standard (AES), also known as Rijndael (its original name pronounced rain-dahl), is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology (NIST) in 2001." + Environment.NewLine +
+                "AES is a subset of the Rijndael cipher developed by two Belgian cryptographers, Joan Daemen and Vincent Rijmen, who submitted a proposal to NIST during the AES selection process. Rijndael is a family of ciphers with different key and block sizes." + Environment.NewLine +
+                "AES has been adopted by the U.S. government and is now used worldwide. It supersedes the Data Encryption Standard (DES), which was published in 1977. The algorithm described by AES is a symmetric-key algorithm, meaning the same key is used for both encrypting and decrypting the data.";
         }
 
         /// <summary>
@@ -44,6 +47,8 @@
         /// Gets the text describing the crypto algorithm.
         /// </summary>
         public string CryptoDescription { get; }
+
+        public string CryptoTypeDescription { get { return CryptoType.SymmetricAlgorithm; } }
 
         /// <summary>
         /// Gets the size of the currently selected keysize.
