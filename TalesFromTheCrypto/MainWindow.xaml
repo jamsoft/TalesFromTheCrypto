@@ -51,8 +51,10 @@
                 <StackPanel>
                     <Label>Key</Label>
                     <TextBlock Text="{Binding Key, Mode=OneWay}" />
+                    <TextBlock Text="{Binding KeyBase64, Mode=OneWay}" />
                     <Label>Initialisation Vector</Label>
                     <TextBlock Text="{Binding Vector, Mode=OneWay}" />
+                    <TextBlock Text="{Binding VectorBase64, Mode=OneWay}" />
                 </StackPanel>
             </GroupBox>
 
@@ -65,7 +67,7 @@
                     <TextBlock Text="{Binding EncryptedString}" TextWrapping="Wrap" />
                     <Label>Decrypted String</Label>
                     <TextBlock Text="{Binding DecryptedString}" TextWrapping="Wrap" />
-                    <Button Command="{Binding DecryptStringCommand}" Width="200" Margin="0, 10" HorizontalAlignment="Left">Dencrypt String</Button>
+                    <Button Command="{Binding DecryptStringCommand}" Width="200" Margin="0, 10" HorizontalAlignment="Left">Decrypt String</Button>
                 </StackPanel>
             </GroupBox>
             

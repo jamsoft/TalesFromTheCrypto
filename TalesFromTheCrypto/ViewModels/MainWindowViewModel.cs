@@ -1,5 +1,6 @@
 ﻿namespace TalesFromTheCrypto.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
@@ -89,12 +90,36 @@
         public string Key => SelectedCryptoClass?.Key.PrintBytes();
 
         /// <summary>
+        /// Gets the key in base64.
+        /// </summary>
+        /// <value>
+        /// The key base64.
+        /// </value>
+        public string KeyBase64
+        {
+            get
+            {
+                if (SelectedCryptoClass == null) return null;
+                return Convert.ToBase64String(SelectedCryptoClass.Key);
+            }  
+        } 
+
+        /// <summary>
         /// Gets the current cryptographic vector from the selected cryptographic class.
         /// </summary>
         /// <value>
         /// The vector.
         /// </value>
         public string Vector => SelectedCryptoClass?.InitialisationVector.PrintBytes();
+
+        public string VectorBase64
+        {
+            get
+            {
+                if (SelectedCryptoClass == null) return null;
+                return Convert.ToBase64String(SelectedCryptoClass.InitialisationVector);
+            }
+        }
 
         #endregion
 
@@ -211,7 +236,9 @@
             ResetUI();
 
             OnPropertyChanged(nameof(Key));
+            OnPropertyChanged(nameof(KeyBase64));
             OnPropertyChanged(nameof(Vector));
+            OnPropertyChanged(nameof(VectorBase64));
             OnPropertyChanged(nameof(CipherModes));
             OnPropertyChanged(nameof(PaddingModes));
             OnPropertyChanged(nameof(SelectedCipherMode));
@@ -320,6 +347,7 @@
                 // vector needs updating
                 _selectedCryptoClass.GenerateVector();
                 OnPropertyChanged(nameof(Vector));
+                OnPropertyChanged(nameof(VectorBase64));
 
                 EncryptedString = null;
                 OnPropertyChanged(nameof(EncryptedString));
