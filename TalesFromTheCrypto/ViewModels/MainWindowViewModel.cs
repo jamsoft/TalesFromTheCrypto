@@ -39,7 +39,7 @@
         /// </summary>
         public MainWindowViewModel()
         {
-            CryptoGenerators = new List<ICryptoGenerator> {new AesRijndaelCrypto()};
+            CryptoGenerators = new List<ICryptoGenerator> {new AesRijndaelCrypto(), new AesCrypto()};
             OnPropertyChanged(nameof(CryptoGenerators));
         }
 
