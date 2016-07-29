@@ -1,5 +1,7 @@
 ﻿namespace TalesFromTheCrypto.Tests
 {
+    using System;
+    using System.Configuration;
     using Demos;
     using Xunit;
 
@@ -46,6 +48,28 @@
 
             Assert.Equal(originalString, decryptedString1);
             Assert.Equal(originalString, decryptedString2);
+        }
+
+        /// <summary>
+        /// Reads the base64 encoded key from configuration then perform encrypt and decrypt processes.
+        /// </summary>
+        [Fact]
+        public void ReadBase64EncodedKeyFromConfig()
+        {
+            var key = ConfigurationManager.AppSettings["testAesEncryptionKey"];
+            var k = Convert.FromBase64String(key);
+
+            var aesDemo = new AesDemo();
+
+            var originalString = "This is the original string";
+            var encryptedString = aesDemo.Encrypt(originalString, k);
+
+            Assert.NotEmpty(encryptedString);
+            Assert.NotEqual(originalString, encryptedString);
+
+            var decryptedString = aesDemo.Decrypt(encryptedString, k);
+
+            Assert.Equal(originalString, decryptedString);
         }
     }
 }
