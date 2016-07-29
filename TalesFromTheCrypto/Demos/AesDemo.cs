@@ -23,24 +23,25 @@
                 Padding = PaddingMode.PKCS7
             })
             {
-
                 var inputBytes = Encoding.UTF8.GetBytes(input);
                 aes.GenerateIV();
                 var iv = aes.IV;
                 using (var encrypter = aes.CreateEncryptor(aes.Key, iv))
-                using (var cipherStream = new MemoryStream())
                 {
-                    using (var tCryptoStream = new CryptoStream(cipherStream, encrypter, CryptoStreamMode.Write))
-                    using (var tBinaryWriter = new BinaryWriter(tCryptoStream))
+                    using (var cipherStream = new MemoryStream())
                     {
-                        //Prepend IV to data
-                        //tBinaryWriter.Write(iv); This is the original broken code, it encrypts the iv
-                        cipherStream.Write(iv, 0, 16);  // Write iv to the plain stream (not tested though)
-                        tBinaryWriter.Write(inputBytes);
-                        tCryptoStream.FlushFinalBlock();
-                    }
+                        using (var tCryptoStream = new CryptoStream(cipherStream, encrypter, CryptoStreamMode.Write))
+                        {
+                            using (var tBinaryWriter = new BinaryWriter(tCryptoStream))
+                            {
+                                cipherStream.Write(iv, 0, aes.IV.Length); // Write iv to the plain stream
+                                tBinaryWriter.Write(inputBytes);
+                                tCryptoStream.FlushFinalBlock();
+                            }
+                        }
 
-                    return Convert.ToBase64String(cipherStream.ToArray());
+                        return Convert.ToBase64String(cipherStream.ToArray());
+                    }
                 }
             }
         }
@@ -53,19 +54,19 @@
         /// <returns></returns>
         public string Decrypt(string input, byte[] keyBytes)
         {
-            using (var provider = new AesCryptoServiceProvider())
+            using (var aes = new AesCryptoServiceProvider())
             {
                 var s = Convert.FromBase64String(input);
-                provider.Key = keyBytes;
+                aes.Key = keyBytes;
 
                 using (var ms = new MemoryStream(s))
                 {
                     // Read the first 16 bytes which is the IV.
-                    byte[] iv = new byte[16];
-                    ms.Read(iv, 0, 16);
-                    provider.IV = iv;
+                    byte[] iv = new byte[aes.IV.Length];
+                    ms.Read(iv, 0, aes.IV.Length);
+                    aes.IV = iv;
 
-                    using (var decryptor = provider.CreateDecryptor())
+                    using (var decryptor = aes.CreateDecryptor())
                     {
                         using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
                         {
