@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TalesFromTheCrypto", "TalesFromTheCrypto.csproj", "{8B3F226D-E425-4771-AED6-F3C6CDEAE622}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TalesFromTheCrypto.Tests", "..\TalesFromTheCrypto.Tests\TalesFromTheCrypto.Tests.csproj", "{F4531F5F-8287-44A7-8D78-D86CF930A922}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8B3F226D-E425-4771-AED6-F3C6CDEAE622}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B3F226D-E425-4771-AED6-F3C6CDEAE622}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B3F226D-E425-4771-AED6-F3C6CDEAE622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4531F5F-8287-44A7-8D78-D86CF930A922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4531F5F-8287-44A7-8D78-D86CF930A922}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4531F5F-8287-44A7-8D78-D86CF930A922}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4531F5F-8287-44A7-8D78-D86CF930A922}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
