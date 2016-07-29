@@ -112,6 +112,12 @@
         /// </value>
         public string Vector => SelectedCryptoClass?.InitialisationVector.PrintBytes();
 
+        /// <summary>
+        /// Gets the vector base64.
+        /// </summary>
+        /// <value>
+        /// The vector base64.
+        /// </value>
         public string VectorBase64
         {
             get
@@ -135,9 +141,7 @@
         {
             get { return _intitialiseCommand ?? (_intitialiseCommand = new CommandHandler(InitialiseCommandExecuted, CanInitaliseCryto)); }
         }
-
         
-
         /// <summary>
         /// Gets the encrypt string command.
         /// </summary>
@@ -148,8 +152,6 @@
         {
             get { return _encryptStringCommand ?? (_encryptStringCommand = new CommandHandler(EncryptStringCommandExecuted, CanEncryptOriginalString)); }
         }
-
-        
 
         /// <summary>
         /// Gets the decrypt string command.

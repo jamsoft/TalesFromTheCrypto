@@ -189,6 +189,10 @@
             return kso;
         }
 
+        /// <summary>
+        /// Calculates the block size options.
+        /// </summary>
+        /// <returns></returns>
         public IList<int> CalculateBlockSizeOptions()
         {
             MinBlockSize = _aesManaged.LegalBlockSizes[0].MinSize;
@@ -335,6 +339,12 @@
             return Transform(buffer, _decryptor);
         }
 
+        /// <summary>
+        /// Transforms the specified buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer.</param>
+        /// <param name="transform">The transform.</param>
+        /// <returns></returns>
         private byte[] Transform(byte[] buffer, ICryptoTransform transform)
         {
             using (MemoryStream stream = new MemoryStream())
