@@ -27,6 +27,9 @@
         private CommandHandler _intitialiseCommand;
         private CommandHandler _encryptStringCommand;
         private CommandHandler _decryptStringCommand;
+        private CommandHandler _copyKeyToClipboardBase64Command;
+        private CommandHandler _copyKeyToClipboardByteArrayCommand;
+
         private ICryptoGenerator _selectedCryptoClass;
 
         private string _selectedCipherMode;
@@ -165,6 +168,28 @@
         }
 
         /// <summary>
+        /// Gets the copy key to clipboard base64 command.
+        /// </summary>
+        /// <value>
+        /// The copy key to clipboard base64 command.
+        /// </value>
+        public CommandHandler CopyKeyToClipboardBase64Command
+        {
+            get { return _copyKeyToClipboardBase64Command ?? (_copyKeyToClipboardBase64Command = new CommandHandler(CopyKeyToClipboardCommandBase64Executed, CanCopyKeyToClipbaordCommand)); }
+        }
+
+        /// <summary>
+        /// Gets the copy key to clipboard byte array command.
+        /// </summary>
+        /// <value>
+        /// The copy key to clipboard byte array command.
+        /// </value>
+        public CommandHandler CopyKeyToClipboardByteArrayCommand
+        {
+            get { return _copyKeyToClipboardByteArrayCommand ?? (_copyKeyToClipboardByteArrayCommand = new CommandHandler(CopyKeyToClipboardCommandByteArrayExecuted, CanCopyKeyToClipbaordCommand)); }
+        }
+
+        /// <summary>
         /// Determines whether this instance [can decrypt encrypted string] the specified parameter.
         /// </summary>
         /// <param name="param">The parameter.</param>
@@ -245,6 +270,37 @@
             OnPropertyChanged(nameof(PaddingModes));
             OnPropertyChanged(nameof(SelectedCipherMode));
             OnPropertyChanged(nameof(SelectedPaddingMode));
+
+            CopyKeyToClipboardBase64Command.RaiseCanExecuteChanged();
+            CopyKeyToClipboardByteArrayCommand.RaiseCanExecuteChanged();
+        }
+
+        private bool CanCopyKeyToClipbaordCommand(object obj)
+        {
+            return SelectedCryptoClass != null && SelectedCryptoClass.Key?.Length > 0;
+        }
+
+        /// <summary>
+        /// Copies the key to clipboard command executed.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void CopyKeyToClipboardCommandBase64Executed(object obj)
+        {
+            var keyText = Convert.ToBase64String(_selectedCryptoClass.Key);
+            Clipboard.SetText(keyText);
+            MessageBox.Show($"Copied {keyText} to the clipboard", "Tales From The Crypto", MessageBoxButton.OK);
+        }
+
+        /// <summary>
+        /// Copies the key to clipboard command byte array executed.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        private void CopyKeyToClipboardCommandByteArrayExecuted(object obj)
+        {
+            var keyText = _selectedCryptoClass.Key.PrintBytes();
+            Clipboard.SetText(keyText);
+            MessageBox.Show($"Copied {keyText} to the clipboard", "Tales From The Crypto", MessageBoxButton.OK);
         }
 
         #endregion
@@ -451,6 +507,8 @@
             IntitialiseCommand.RaiseCanExecuteChanged();
             EncryptStringCommand.RaiseCanExecuteChanged();
             DecryptStringCommand.RaiseCanExecuteChanged();
+            CopyKeyToClipboardBase64Command.RaiseCanExecuteChanged();
+            CopyKeyToClipboardByteArrayCommand.RaiseCanExecuteChanged();
         }
 
         /// <summary>

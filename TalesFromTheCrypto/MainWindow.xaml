@@ -52,6 +52,8 @@
                     <Label>Key</Label>
                     <TextBlock Text="{Binding Key, Mode=OneWay}" />
                     <TextBlock Text="{Binding KeyBase64, Mode=OneWay}" />
+                    <Button Command="{Binding CopyKeyToClipboardBase64Command}" Width="350" Margin="0,10" HorizontalAlignment="Left"> Copy Key to Clipboard (Base64 Encoded)</Button>
+                    <Button Command="{Binding CopyKeyToClipboardByteArrayCommand}" Width="350" Margin="0,10" HorizontalAlignment="Left">Copy Key to Clipboard (Array Bytes)</Button>
                     <Label>Initialisation Vector</Label>
                     <TextBlock Text="{Binding Vector, Mode=OneWay}" />
                     <TextBlock Text="{Binding VectorBase64, Mode=OneWay}" />
